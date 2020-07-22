@@ -1,5 +1,4 @@
 package neuralnetwork;
-
 import java.util.ArrayList;
 
 /**
@@ -10,6 +9,8 @@ public class OutputLayer extends Layer {
 
 	private static final long serialVersionUID = -3956612607396562966L;
 
+	static OutputLayer instance = null;
+	
 	//Célvektor
     double[] target = null;
     
@@ -17,15 +18,24 @@ public class OutputLayer extends Layer {
 	private OutputLayer() {}
 	
 	/**
+	 * Visszaadja a létrehozott kimeneti réteget.
+	 * @return Outputlayer
+	 * @see #instance
+	 */
+	public static OutputLayer getInstance() {
+		return instance;
+	}
+	
+	/**
 	 * <p>Gyártófüggvény, létrehozza az output layer-t, és hozzáadja a neurális hálózat layer tárolójához</p>
 	 * @return létrejött kimeneti réteg
 	 */
 	public static OutputLayer create() {
-		OutputLayer layer = new OutputLayer();
-		layer.neurons = new ArrayList<>();
-		NeuralNetwork.getInstance().getLayers().add(layer);
-		return layer;
-		}
+		instance = new OutputLayer();
+		instance.neurons = new ArrayList<>();
+		NeuralNetwork.getInstance().getLayers().add(instance);
+		return instance;
+	}
 	
 	/**
 	 * <p>Az elvont Layer működéshez hozzáadódik a hálózat kimenetelének dimenzionális beállítása.</p>

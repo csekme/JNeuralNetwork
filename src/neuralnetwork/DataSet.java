@@ -1,7 +1,6 @@
 package neuralnetwork;
 import java.io.Serializable;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.time.LocalDateTime;
 /**
  * A neurális hálózat felügyelt tanító algoritmusa ezzel az adatszerkezettel operál
  * egy osztálypéldány egy tanító sort reprezentál
@@ -14,9 +13,6 @@ import org.apache.logging.log4j.Logger;
 public class DataSet implements Serializable {
 
 	private static final long serialVersionUID = -7493796630981995433L;
-
-	/** File logger */
-	static Logger flog = LogManager.getLogger("NeuralNetwork");
 	
 	/** A hálózat bemenetével egyenlő méretű tanító adat */
 	private double[] trainVector  = null;
@@ -46,17 +42,17 @@ public class DataSet implements Serializable {
 		DataSet ds = new DataSet();
 		if (NeuralNetwork.getInstance()==null) {
 			String errMessage = "Nincs neurális hálózat példány ezért nem hozható létre tanító adatsor";
-			flog.warn(errMessage);
+			warn(errMessage);
 			throw new RuntimeException(errMessage);		
 		}
 		if (trainSet.length!=NeuralNetwork.getInstance().getInputUnitNumber()) {
 			String errMessage = "A neurális hálózat bemeneti neuronszáma nem egyezik a tanító adat számosságával"; 
-			flog.warn(errMessage);
+			 warn(errMessage);
 			throw new RuntimeException(errMessage);
 		}
 		if (targetSet.length!=NeuralNetwork.getInstance().getOutputUnitNumber()) {
 			String errMessage = "A neurális hálózat kimeneti neuronszáma nem egyezik a cél adat számosságával"; 
-			flog.warn(errMessage);
+			 warn(errMessage);
 			throw new RuntimeException(errMessage);
 		}
 		ds.trainVector = trainSet;
@@ -98,6 +94,12 @@ public class DataSet implements Serializable {
 		this.learningRate = learningRate;
 	}
 	
+	public static void trace(String line, Object ...puts) {
+		System.out.println("TRACE | " + LocalDateTime.now().toString() + " |" +  " " + line.replace("{}", puts.toString()));
+	}
 	
+	public static void warn(String line, Object ...puts) {
+		System.err.println("WARN | " + LocalDateTime.now().toString() + " |"  + " "  + line.replace("{}", puts.toString()));
+	}
 	
 }

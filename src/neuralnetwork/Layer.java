@@ -108,5 +108,17 @@ public abstract class Layer  implements Serializable {
     public List<Neuron> getNeurons() {
         return neurons;
     }
+    
+    /**
+     * Visszaadja a réteg neuronjainak kimenetét.
+     */
+	@Override
+	public String toString() {
+		String out = "";
+		for (int c=0; c<neurons.size(); c++) {
+			out+="n"+(c+1)+"="+neurons.get(c).y;
+		}
+		return out;
+	}
 
 }

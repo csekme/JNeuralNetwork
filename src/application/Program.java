@@ -1,16 +1,13 @@
 package application;
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import framework.F;
-import framework.ReadVersion;
+//import neuralnetwork.DataSet;
+//import neuralnetwork.GradiantTrainer;
+//import neuralnetwork.HiddenLayer;
+//import neuralnetwork.InputLayer;
+//import neuralnetwork.NeuralNetwork;
+//import neuralnetwork.Neuron;
+//import neuralnetwork.OutputLayer;
+//import neuralnetwork.Trace;
+//import neuralnetwork.Trainer;
 
 /**
  * Az alkalmazás egyetlen belépési ponttal rendelkező indító osztálya
@@ -18,14 +15,7 @@ import framework.ReadVersion;
  * @see App
  */
 public class Program {
-	
-	//Logger
-	static Logger log = LogManager.getLogger(Program.class.getName());
-      
-    //Szín beállítások
-    public static Color accentColor = new Color(13,127,217);
-    public static Color borderColor = new Color(200, 120, 215); 
-    
+
     //Build és verzió adatok
     public static String build = "";
     public static final String VERSION = "1.0.0"; 
@@ -34,49 +24,41 @@ public class Program {
      * Belépési pont, az alkalmazás az argumentumokra nem reagál
      * @param args the command line arguments
      */
-    @SuppressWarnings("resource")
 	public static void main(String args[]) {
     	
-    	log.warn("Start application");
-    	
-    	//GIT commitok számának kiolvasása, és felhasználása build szám megállapítására
-        File bf = new File( F.getApplicationLocation() + "/deploy/git.txt" );
-        if (bf.exists()) {
-            BufferedReader read = null;
-            try {
-                read = new BufferedReader(new FileReader(bf));
-                build = read.readLine();
-                
-            } catch (FileNotFoundException e) {
-                 build =  ReadVersion.getManifestInfo();
-            } catch (IOException e) {
-                 build =  ReadVersion.getManifestInfo();
-            } finally {
-                if (read!=null) {
-                    try {
-                        read.close();
-                    } catch (IOException e) { 
-                    }
-                }
-            }
-        } else {
-             build =  ReadVersion.getManifestInfo();
-        }
-        
-        //Look and feel beállítások
-        
-		UIDefaults uiDefaults = UIManager.getDefaults();
-		uiDefaults.put("TitledBorder.titleColor", new javax.swing.plaf.ColorUIResource(borderColor));
+		System.out.println("Neural Network Java SE Implementation.");
+		System.out.println("VERSION=" + VERSION);
 		
-		try {
-            UIManager.setLookAndFeel( "com.formdev.flatlaf.FlatIntelliJLaf" );
-        } catch (Exception e) {
-        	log.warn(e.getMessage());
-        }
-              
-        /* A főablak példányosítása és megjelenítése */
-        java.awt.EventQueue.invokeLater(() -> {
-            App.getInstance().setVisible(true);
-        });
+    	/*
+    	NeuralNetwork nn = NeuralNetwork.create();
+    	InputLayer.create().addNeuron(2, Neuron.Activation.SIGMOID, 1.0, true);
+    	HiddenLayer.create().addNeuron(3, Neuron.Activation.SIGMOID, 1.0, true);
+    	OutputLayer.create().addNeuron(1, Neuron.Activation.SIGMOID, 1.0, true);
+    	
+    	nn.initWeights();
+ 
+    	Trainer tr = new GradiantTrainer();
+    	nn.setTrainer(tr);
+    	tr.getDataSet().add(DataSet.create(new double[] {0,0},new double[] {0}));
+    	tr.getDataSet().add(DataSet.create(new double[] {0,1},new double[] {1}));
+    	tr.getDataSet().add(DataSet.create(new double[] {1,0},new double[] {1}));
+    	tr.getDataSet().add(DataSet.create(new double[] {1,1},new double[] {0}));
+    	tr.setEpoch(20000);
+    	tr.setRandomSequence(true);
+    	tr.run();
+    	tr.join();
+    	
+    	Trace.trace("\n\nResult:");
+    	nn.stimulus(new double[] {0, 0});
+    	Trace.trace(OutputLayer.getInstance().toString());
+    	nn.stimulus(new double[] {0, 1});
+    	Trace.trace(OutputLayer.getInstance().toString());
+    	nn.stimulus(new double[] {1, 0});
+    	Trace.trace(OutputLayer.getInstance().toString());
+    	nn.stimulus(new double[] {1, 1});
+    	Trace.trace(OutputLayer.getInstance().toString());
+    	*/
+    	
+    	
     }
 }

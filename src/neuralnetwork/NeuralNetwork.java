@@ -8,13 +8,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import math.LinearMath;
 import neuralnetwork.Neuron.Activation;
-import plotter.Range;
-import plotter.Series;
-
+ 
 /**
  * Mesterséges Neurális Hálózat osztály.
  * Az osztály egységbe foglalja a teljes neurális hálózatot annak minden elemével
@@ -32,9 +29,6 @@ public class NeuralNetwork implements Serializable {
 	
 	static int id = 0;
 
-	/** File logger */
-	Logger nlog = LogManager.getLogger("NeuralNetwork");
-	
 	// Neurális rétegeket összetartó lista
     private List<Layer> layers = null;
     
@@ -54,8 +48,12 @@ public class NeuralNetwork implements Serializable {
     private int numberOfTrainSet = 0;
     
     
-    //Minden esemény számolás kiírása konzolra
+    //Hibaesemények illetve általános nem számítással kapcsolatos események kiíratása
     public boolean verbose = true;
+
+    //Minden esemény számolás kiírása konzolra
+    public boolean trace = false;
+
     
     //Tanulás alkalmával a tanítópontok rögzítése
     private boolean storeTrainSet = false;
@@ -66,14 +64,7 @@ public class NeuralNetwork implements Serializable {
     //Tanulópontok tárolása
     private List<DataSet> dataSets = null;
     
-    //Tanulási görbe adatok
-    Range learnRateEpisode = null;
-    Range learnRateEnergy = null;
-    Series learnRatePoints = null;
-    
-    //Osztályozási feladatok
-    Range classXAxis = null;
-    Range classYAxis = null;
+ 
     double classMapDesnity = 0.3;
     Map<String, Color> clm = new HashMap<>();
     
@@ -140,33 +131,33 @@ public class NeuralNetwork implements Serializable {
      */
     public void build(int[] layer, Activation[] activation , Double[] bias, boolean[] biasWeightable) {
         
-    	nlog.trace("Neurális hálózat létrehozása");
-    	nlog.trace("Megnevezés: {}", NeuralNetwork.getInstance().getName());
-    	nlog.trace("Leírás: {}", NeuralNetwork.getInstance().getDescription());
+    	Trace.trace("Neurális hálózat létrehozása");
+    	Trace.trace("Megnevezés: " + NeuralNetwork.getInstance().getName());
+    	Trace.trace("Leírás: " + NeuralNetwork.getInstance().getDescription());
 
         if (layer.length < 2) {
-        	nlog.error("Minimum 2 réteget meg kell adni");
+        	Trace.warn("Minimum 2 réteget meg kell adni");
             throw new RuntimeException("Minimum 2 réteget meg kell adni");
         }
         if (layer.length != activation.length) {
-        	nlog.error("A bemeneti paraméterek (tömbök) elemszáma nem egyezik");
+        	Trace.warn("A bemeneti paraméterek (tömbök) elemszáma nem egyezik");
             throw new RuntimeException("A bemeneti paraméterek (tömbök) elemszáma nem egyezik");
         }
         layers.clear();
 
         for (int i = 0; i < layer.length; i++) {
             if (layer[i] == 0) {
-            	nlog.error("minimum 1 neuront meg kell adni az adott rétegnek");
+            	Trace.warn("minimum 1 neuront meg kell adni az adott rétegnek");
                 throw new RuntimeException("minimum 1 neuront meg kell adni az adott rétegnek");
             }
             if (i == 0) {
-            	nlog.trace("Bemeneti réteg hozzáadása: {} egységszámmal.",layer[i]);
+            	Trace.trace("Bemeneti réteg hozzáadása: "+ layer[i] + " egységszámmal.");
                 InputLayer.create().addNeuron(layer[i], activation[i], bias[i], biasWeightable[i]);
             } else if (i == layer.length - 1) {
-            	nlog.trace("Kimeneti réteg hozzáadása: {} egységszámmal. {} aktiváló függvénnyel.",layer[i], activation[i].toString());
+            	Trace.trace("Kimeneti réteg hozzáadása: {} egységszámmal. {} aktiváló függvénnyel.",layer[i], activation[i].toString());
                 OutputLayer.create().addNeuron(layer[i], activation[i], bias[i], biasWeightable[i]);
             } else {
-            	nlog.trace("Rejtett réteg hozzáadása: {} egységszámmal. {} aktiváló függvénnyel.",layer[i], activation[i].toString());
+            	Trace.trace("Rejtett réteg hozzáadása: {} egységszámmal. {} aktiváló függvénnyel.",layer[i], activation[i].toString());
                 HiddenLayer.create().addNeuron(layer[i], activation[i], bias[i], biasWeightable[i]);
             }
         }
@@ -201,7 +192,7 @@ public class NeuralNetwork implements Serializable {
      */
     public void stimulus(double[] input) {
         if (input.length != layers.get(0).getNeurons().size()) {
-        	nlog.warn("Az átadott elemszámú bemeneti vektor nem illeszkedik a hálózat bemenetére, eltérő a méretük!");
+        	Trace.warn("Az átadott elemszámú bemeneti vektor nem illeszkedik a hálózat bemenetére, eltérő a méretük!");
             throw new RuntimeException("Az átadott elemszámú bemeneti vektor nem illeszkedik a hálózat bemenetére, eltérő a méretük!");
         }
         for (int i = 0; i < input.length; i++) {
@@ -225,8 +216,8 @@ public class NeuralNetwork implements Serializable {
      * @see #stimulus
      */
     private void stimulusTransmitter() {
-    	if (verbose) {
-    		nlog.trace("Iteráció [{}]", iteration);
+    	if (trace) {
+    		Trace.trace("Iteráció [{}]", iteration);
     	}
     	iteration++;
         
@@ -234,12 +225,12 @@ public class NeuralNetwork implements Serializable {
 
             if (l > 0) {
                 for (int u = 0; u < layers.get(l).getNeurons().size(); u++) {
-                    if (verbose) {
-                        nlog.trace("");
+                    if (trace) {
+                        Trace.trace("");
                     }
                     Neuron p = layers.get(l).getNeurons().get(u);
-                    if (verbose) {
-                    	nlog.trace((l == layers.size() - 1 ? "Kimeneti réteg: [" : "Rejtett réteg: [") + (l + 1) + "] \t Processzáló egység: [" + (u + 1) + "]");
+                    if (trace) {
+                    	Trace.trace((l == layers.size() - 1 ? "Kimeneti réteg: [" : "Rejtett réteg: [") + (l + 1) + "] \t Processzáló egység: [" + (u + 1) + "]");
                     }
 
                     double[] w = p.weights; //get(l, u).weights;
@@ -248,26 +239,26 @@ public class NeuralNetwork implements Serializable {
                         w = LinearMath.addElementToVector(w, p.getBiasWeight(), true);
                         y = LinearMath.addElementToVector(y, p.getBias(), true);
                     }
-                    if (verbose) {
-                    	nlog.trace("w {}",Arrays.toString(w));
+                    if (trace) {
+                    	Trace.trace("w {}",Arrays.toString(w));
                     }
                     p.net = LinearMath.scalarProduct(w, y);
-                    if (verbose) {
-                    	nlog.trace("net = {}", p.net);
+                    if (trace) {
+                    	Trace.trace("net = {}", p.net);
                     }
                     p.y = p.activate(p.net);
-                    if (verbose) {
-                    	nlog.trace("y{} = {}", (u+1), p.y);
-                        nlog.trace("");
+                    if (trace) {
+                    	Trace.trace("y{} = {}", (u+1), p.y);
+                        Trace.trace("");
                     }
                 }
             } else {
                 for (int u = 0; u < layers.get(l).getNeurons().size(); u++) {
-                    if (verbose) {
-                    	nlog.trace("");
-                    	nlog.trace("Bemeneti réteg: [{}] \t Processzáló egység: [{}]", (l + 1) , (u + 1));
-                    	nlog.trace("x{} = {}", (u + 1), layers.get(l).getNeurons().get(u).y );
-                    	nlog.trace(""); 
+                    if (trace) {
+                    	Trace.trace("");
+                    	Trace.trace("Bemeneti réteg: [{}] \t Processzáló egység: [{}]", (l + 1) , (u + 1));
+                    	Trace.trace("x{} = {}", (u + 1), layers.get(l).getNeurons().get(u).y );
+                    	Trace.trace(""); 
                     }
                 }
             }
@@ -289,7 +280,7 @@ public class NeuralNetwork implements Serializable {
      * @see Neuron
      */
     public void initWeights() {
-    	nlog.trace("Súlyok inicializálása...");
+    	Trace.trace("Súlyok inicializálása...");
       
         for (int l = 0; l < layers.size(); l++) {
             if (l == 0) {
@@ -556,120 +547,8 @@ public class NeuralNetwork implements Serializable {
 	public void setDataSet(List<DataSet> trainPoints) {
 		this.dataSets = trainPoints;
 	}
-
-	/**
-	 * Tanulási görbe x tengelye
-	 * @return tanulási görbe x tengelye
-	 */
-	public Range getLearnRateEpisode() {
-		return learnRateEpisode;
-	}
-	
-	/**
-	 * Tanulási görbe x tengelye
-	 * @param learnRateEpisode x tengely
-	 */
-	public void setLearnRateEpisode(Range learnRateEpisode) {
-		this.learnRateEpisode = learnRateEpisode;
-	}
-
-	/**
-	 * Tanulási görbe y tengelye
-	 * @return tanulási görbe y tengelye
-	 */
-	public Range getLearnRateEnergy() {
-		return learnRateEnergy;
-	}
-
-	/**
-	 * Tanulási görbe y tengelye
-	 * @param learnRateEnergy y tengely
-	 */
-	public void setLearnRateEnergy(Range learnRateEnergy) {
-		this.learnRateEnergy = learnRateEnergy;
-	}
-	
-	/**
-	 * Visszaadja a maximális hálózati energiát a tanítás során
-	 * mért adatokból
-	 * @see Trainer
-	 * @see #learnRatePoints
-	 * @return max hálózati energia
-	 */
-	public double getMaxLearnRateEnergy() {
-		double max = Double.MIN_VALUE;
-		for (int i=0; i<learnRatePoints.polygons.size(); i++) {
-			if (learnRatePoints.polygons.get(i).getY()>max) {
-				max = learnRatePoints.polygons.get(i).getY();
-			}
-		}
-		return max;
-	}
-	
-	/**
-	 * Visszaadja a legkisebb hálózati energiát a tanítás során
-	 * mért adatokból 
-	 * @see Trainer
-	 * @see #learnRatePoints
-	 * @return min hálózat energiája
-	 */
-	public double getMinLearnRateEnergy() {
-		double min = Double.MAX_VALUE;
-		for (int i=0; i<learnRatePoints.polygons.size(); i++) {
-			if (learnRatePoints.polygons.get(i).getY()<min) {
-				min = learnRatePoints.polygons.get(i).getY();
-			}
-		}
-		return min;
-	}
-
-	/**
-	 * Tanulási görbe pontjai
-	 * @return görbe pontok
-	 */
-	public Series getLearnRatePoints() {
-		return learnRatePoints;
-	}
-
-	/**
-	 * Tanulási görbe pontjai
-	 * @param learnRatePoints görbe pontok
-	 */
-	public void setLearnRatePoints(Series learnRatePoints) {
-		this.learnRatePoints = learnRatePoints;
-	}
-
-	/**
-	 * Osztályozó képernyő x tengely
-	 * @return Range mint x tengely
-	 */
-	public Range getClassXAxis() {
-		return classXAxis;
-	}
-
-	/**
-	 * Osztályozó képernyő x tengely
-	 * @param classXAxis x tengely
-	 */
-	public void setClassXAxis(Range classXAxis) {
-		this.classXAxis = classXAxis;
-	}
-
-	/**
-	 * Osztályozó képernyő y tengely
-	 * @return osztályozó képernyő y tengely
-	 */
-	public Range getClassYAxis() {
-		return classYAxis;
-	}
-
-	/**
-	 * Osztályozó képernyő y tengely
-	 * @param classYAxis y tengely
-	 */
-	public void setClassYAxis(Range classYAxis) {
-		this.classYAxis = classYAxis;
-	}
+ 
+ 
 
 	/**
 	 * Osztályozó képernyő szín tokenek
@@ -702,9 +581,16 @@ public class NeuralNetwork implements Serializable {
 	public void setClassMapDesnity(double classMapDesnity) {
 		this.classMapDesnity = classMapDesnity;
 	}
-    
+  
 	
-    
-    
-    
+	
+	public boolean isTrace() {
+		return trace;
+	}
+
+	public void setTrace(boolean trace) {
+		this.trace = trace;
+	}
+
+ 
 }

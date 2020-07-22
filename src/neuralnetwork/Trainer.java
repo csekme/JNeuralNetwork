@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * A tanító algoritmus elvont osztály gondoskodik a hálózat felügyelt tanításáról
@@ -26,9 +24,6 @@ public abstract class Trainer implements Runnable, Serializable {
 	
 	/** Tanítás iterációk száma */
 	protected int iteration;
-	
-	/** File logger */
-	protected Logger flog = LogManager.getLogger("NeuralNetwork");
 	
 	/** Tanító adat készlet*/
 	protected List<DataSet> dataSet;
@@ -74,6 +69,16 @@ public abstract class Trainer implements Runnable, Serializable {
      */
     public Trainer() {
     	dataSet = new ArrayList<>();
+    }
+    
+    public void join() {
+    	while(isRun()) {
+    		try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+    	}
     }
 
     /**

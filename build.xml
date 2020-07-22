@@ -36,7 +36,7 @@
 <property name="debug" value="on"/>
 
 <!-- javadoc package -->
-<property name="packages" value="math,neuralnetwork,framework"/>
+<property name="packages" value="math,neuralnetwork"/>
 
 <!-- Create necessary directories -->
 <target name="prepare">
@@ -82,9 +82,6 @@
 					<attribute name="SplashScreen-Image" value="resources/images/splash.png"/>
 					<attribute name="Class-Path" value="."/>
 		         <attribute name="Rsrc-Class-Path" value="./  
-					   flatlaf-0.26.jar
-					   log4j-api-2.13.1.jar
-					   log4j-core-2.13.1.jar
 					"/>
 					<attribute name="Permissions" value="all-permissions"/>
 					<attribute name="Codebase" value="*"/>
@@ -92,15 +89,10 @@
 				<zipfileset src="jar-in-jar-loader.zip"/>
 				<fileset dir="${dir.project}/classes"/>
 				
-				<zipfileset dir="${dir.project}/lib">
-		            <include name="flatlaf-0.26.jar" />
-					<include name="log4j-api-2.13.1.jar" />
-					<include name="log4j-core-2.13.1.jar" />					
+				<zipfileset dir="${dir.project}/lib">				
 		        </zipfileset>
 		 
 				<zipfileset dir="${dir.project}/src">
-		            <include name="log4j2.xml" />
-					<include name="resources/images/**/*" />
 					<include name="resources/**/*" />
 		        </zipfileset>
 			</jar>
@@ -134,7 +126,6 @@
    </bottom>
    <group title = "Lineáris algebra könyvtár" packages = "math"/>
    <group title = "Neurális hálózat" packages = "neuralnetwork"/>
-   <group title = "Keretrendszer" packages = "framework"/>
    </javadoc>
    <echo>JavaDoc generated to ${dir.javadoc}</echo>
 </target>
