@@ -12,7 +12,7 @@ ant all
 
 ## Usage
 
-Here is an example for learning XOR fuction.
+Here is an example for learning XOR function.
 
 | A | B | y
 |---|---|---
@@ -25,11 +25,11 @@ Here is an example for learning XOR fuction.
 
     // Create Neural Network instance
     NeuralNetwork nn = NeuralNetwork.create();
-    // Define input layer width two neurons and sigmoid activation
+    // Define input layer with two neurons and sigmoid activation
     // bias value is 1.0 with adjustable weight
     InputLayer.create().addNeuron(2, Neuron.Activation.SIGMOID, 1.0, true);
     
-    // Define one hidden layer width three neurons and sigmoid activation
+    // Define one hidden layer with three neurons and sigmoid activation
     // bias value is 1.0 with adjustable weight
     HiddenLayer.create().addNeuron(3, Neuron.Activation.SIGMOID, 1.0, true);
     
@@ -55,7 +55,7 @@ Here is an example for learning XOR fuction.
     tr.setEpoch(20000);
 
     // You can use condition for stop training 
-    // When it reaches the specified value, it will stops regardless of the epoch number
+    // When it reaches the specified value, it will stop regardless of the epoch number
     //tr.setShutdownCondition(0.002);
 
     // Set to use a gradient search brave factor default is 0.175
