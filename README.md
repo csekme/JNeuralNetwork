@@ -103,7 +103,19 @@ energy that is probable with the shutdown criterion.
 
 ![](MD/sd.png)
 
-Ahol 𝑡̅ jelenti a célvektort, illetve 𝑦̅ a kimeneti vektort. A leállási feltételnek célszerű
-egy rendkívül kicsi számot adni mert a hálózat energiája a nulla felé tart.
+Where 𝑡̅ is the target vector and 𝑦̅ is the output vector. The shutdown condition is appropriate
+to give an extremely small number because the energy of the network goes towards zero.
 
-![](MD/sd_lim.png)
+![](MD/sdlim.png)
+
+
+## Please donate free coffee here
+
+
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_donations" />
+<input type="hidden" name="business" value="KUWFCXWLUR7CW" />
+<input type="hidden" name="currency_code" value="USD" />
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+<img alt="" border="0" src="https://www.paypal.com/en_HU/i/scr/pixel.gif" width="1" height="1" />
+</form>
