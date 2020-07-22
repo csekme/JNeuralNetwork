@@ -4,7 +4,7 @@ Artificial Neural Network implementation in Java.
 For the time being, the documentation in the source code and the program interfaces are only available in Hungarian. Translation in progress.
 
 ## Installation
-The project can be build using Ant. The result will be appear in deploy diretory as the name of **JArtificialNeuralNetwork.jar**.
+The project can be build using Ant. The result will be appear in deploy directory as the name of **JArtificialNeuralNetwork.jar**.
 ```sh
 #usage
 ant all
